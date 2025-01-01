@@ -42,6 +42,9 @@ async def main():
     if "messages" not in st.session_state:
         st.session_state.messages = []    
 
+    # can load in session state messages from database if logged in
+    #-----------------------------------------------------------
+
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         role = message.role
@@ -69,8 +72,8 @@ async def main():
         st.session_state.messages.append(ModelTextResponse(content=response_content))
         
 
-    st.markdown(st.session_state.messages)
     #can just save chat history then load it back up when the app is rerun
+    # st.markdown(st.session_state.messages)
 
 
 if __name__ == "__main__":

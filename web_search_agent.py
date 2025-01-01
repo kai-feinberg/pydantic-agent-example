@@ -22,8 +22,17 @@ llm = os.getenv('LLM_MODEL', 'gpt-4o')
 model = OpenAIModel(llm) 
 
 # 'if-token-present' means nothing will be sent (and the example will work) if you don't have logfire configured
-logfire.configure(send_to_logfire='if-token-present')
+# logfire.configure(send_to_logfire='if-token-present')
 
+# Configure Logfire with more detailed settings
+logfire.configure(
+    token =os.getenv('LOGFIRE_TOKEN', None),
+    send_to_logfire='if-token-present',
+    service_name="web-search-agent",
+    service_version="1.0.0",
+    environment=os.getenv('ENVIRONMENT', 'development'),
+
+)
 
 # Class for dependencies for agent (will be injected from ui)
 @dataclass
