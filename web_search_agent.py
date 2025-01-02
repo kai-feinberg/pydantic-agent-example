@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai import Agent, ModelRetry, RunContext
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.formatters import TextFormatter
 
 load_dotenv()
 llm = os.getenv('LLM_MODEL', 'gpt-4o')
@@ -43,7 +45,7 @@ class Deps:
 
 web_search_agent = Agent(
     model,
-    system_prompt=f'You are an expert at researching the web to answer user questions. Format your response in markdown and provide citations as well as the sources at the end of the response',
+    system_prompt=f'You are an expert at researching the web to answer user questions. Format your response in markdown and provide citations as well as the sources at the end of the response. You also have the ability to fetch the transcript of Youtube Videos. Use this functionaluty to generate notes in markdown format based on the content of a youtube video.',
     deps_type=Deps,
     retries=2
 )
@@ -98,6 +100,29 @@ async def search_web(
 
     return "\n".join(results) if results else "No results found for the query."
 
+@web_search_agent.tool
+async def get_youtube_transcript(
+    ctx: RunContext[Deps], video_url: str
+)-> str:
+    """Get the transcript of a YouTube video. Use this to take generate notes in markdown format based on the content of a youtube video.
+
+    Args:
+        ctx: The context.
+        video_url: The URL of the YouTube video.
+
+    Returns:
+        str: The transcript of the video.
+    """
+    with logfire.span('getting YouTube transcript', video_url=video_url) as span:
+        if not video_url.startswith('https://www.youtube.com/watch?v='):
+            return "Invalid YouTube video URL. Please provide a valid YouTube video URL."
+        video_id = video_url.split('v=')[-1]
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        formatter = TextFormatter()
+        formatted_transcript = formatter.format_transcript(transcript)
+        span.set_attribute('transcript', formatted_transcript)
+    
+    return formatted_transcript if formatted_transcript else "No transcript found for the video."
 
 async def main():
     async with AsyncClient() as client:

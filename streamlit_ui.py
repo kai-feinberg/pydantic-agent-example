@@ -18,6 +18,24 @@ llm = os.getenv('LLM_MODEL', 'gpt-4o')
 
 model = OpenAIModel('gpt-4o')
 
+def create_copy_button(text, key):
+    """Create a copy button for the given text"""
+    # JavaScript function to copy text to clipboard
+    js_code = f"""
+        <script>
+        function copyToClipboard{key}() {{
+            const text = `{text}`;
+            navigator.clipboard.writeText(text)
+                .then(() => alert('Copied to clipboard!'))
+                .catch(err => alert('Failed to copy text: ' + err));
+        }}
+        </script>
+        <button onclick="copyToClipboard{key}()">
+            📋 Copy Response
+        </button>
+    """
+    return js_code
+
 async def prompt_ai(messages):
     async with AsyncClient() as client:
         brave_api_key = os.getenv('BRAVE_API_KEY', None)
@@ -68,9 +86,8 @@ async def main():
                 response_content += chunk
                 # Update the placeholder with the current response content
                 message_placeholder.markdown(response_content)
-        
+      
         st.session_state.messages.append(ModelTextResponse(content=response_content))
-        
 
     #can just save chat history then load it back up when the app is rerun
     # st.markdown(st.session_state.messages)
