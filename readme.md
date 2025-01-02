@@ -43,12 +43,13 @@ The Streamlit app is created to provide a UI with text streaming from the LLM. Y
 This is where you will write your agent with pydantic ai. By default the model will respond to messages with chat gpt-4o.
 
 You can define your system prompt during agent creation
-    ```
+
+    
         ai_agent = Agent(
             model,
             system_prompt="INSERT HERE",
             ...
-    ````
+    
 
 Define your tools with the @ai_agent.tool decorator. You can use any python libraries you like (but make sure to update requirements.txt). If you would like to integrate logfire logging from pydantic ai you can create and use a LOGFIRE_TOKEN from [https://logfire.pydantic.dev/docs/#logfire](https://logfire.pydantic.dev/docs/#logfire).
 
