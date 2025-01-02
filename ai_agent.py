@@ -43,19 +43,36 @@ class Deps:
     brave_api_key: str | None
 
 
-web_search_agent = Agent(
+ai_agent = Agent(
     model,
-    system_prompt=f'You are an expert at researching the web to answer user questions. Format your response in markdown and provide citations as well as the sources at the end of the response. You also have the ability to fetch the transcript of Youtube Videos. Use this functionaluty to generate notes in markdown format based on the content of a youtube video.',
+    system_prompt=
+        '''You are an expert at researching the web to answer user questions. 
+        Format your response in markdown and provide citations as well as the sources at the end of the response. 
+        You also have the ability to fetch the transcript of Youtube Videos. Use this functionality to generate notes in markdown format based on the content of a youtube video.
+
+        When taking notes use the following guidelines:
+            Please summarize the following information as structured notes. Focus on capturing key points, omitting unnecessary details, and using bullet points or short paragraphs for readability. Prioritize clarity and conciseness by highlighting:
+                1. **Main topics or sections**
+                2. **Key points, insights, or findings**
+                3. **Supporting details** (only if essential)
+                4. **Action items or next steps** (if applicable)
+                5. **Dates, names, or specific terms** (only if relevant)
+
+                Format the notes in bullet points or short, clear sentences. Avoid repetition or filler words. Aim for a summary that is easy to scan and ideal for quick reference.
+    
+        ''',
     deps_type=Deps,
     retries=2
 )
 
 
-@web_search_agent.tool
+@ai_agent.tool
 async def search_web(
     ctx: RunContext[Deps], web_query: str
 ) -> str:
-    """Search the web given a query defined to answer the user's question.
+    """
+     
+    Search the web given a query defined to answer the user's question.
 
     Args:
         ctx: The context.
@@ -100,11 +117,13 @@ async def search_web(
 
     return "\n".join(results) if results else "No results found for the query."
 
-@web_search_agent.tool
+@ai_agent.tool
 async def get_youtube_transcript(
     ctx: RunContext[Deps], video_url: str
 )-> str:
-    """Get the transcript of a YouTube video. Use this to take generate notes in markdown format based on the content of a youtube video.
+    """
+     
+    Get the transcript of a YouTube video. Use this to take generate notes in markdown format based on the content of a youtube video.
 
     Args:
         ctx: The context.

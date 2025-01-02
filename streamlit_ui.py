@@ -1,47 +1,27 @@
 from dotenv import load_dotenv
 from httpx import AsyncClient
-from datetime import datetime
 import streamlit as st
 import asyncio
 import json
 import os
-
 from openai import AsyncOpenAI, OpenAI
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.messages import ModelTextResponse, UserPrompt
 
 # imports the search agent and its dependencies
-from web_search_agent import web_search_agent, Deps
+from ai_agent import ai_agent, Deps
 
 load_dotenv()
 llm = os.getenv('LLM_MODEL', 'gpt-4o')
 
 model = OpenAIModel('gpt-4o')
 
-def create_copy_button(text, key):
-    """Create a copy button for the given text"""
-    # JavaScript function to copy text to clipboard
-    js_code = f"""
-        <script>
-        function copyToClipboard{key}() {{
-            const text = `{text}`;
-            navigator.clipboard.writeText(text)
-                .then(() => alert('Copied to clipboard!'))
-                .catch(err => alert('Failed to copy text: ' + err));
-        }}
-        </script>
-        <button onclick="copyToClipboard{key}()">
-            📋 Copy Response
-        </button>
-    """
-    return js_code
-
 async def prompt_ai(messages):
     async with AsyncClient() as client:
         brave_api_key = os.getenv('BRAVE_API_KEY', None)
         deps = Deps(client=client, brave_api_key=brave_api_key)
 
-        async with web_search_agent.run_stream(
+        async with ai_agent.run_stream(
             messages[-1].content, deps=deps, message_history=messages[:-1]
         ) as result:
             async for message in result.stream_text(delta=True):  
@@ -54,7 +34,7 @@ async def prompt_ai(messages):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 async def main():
-    st.title("Pydantic AI Chatbot")
+    st.title("AI Chatbot with agents")
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -68,10 +48,10 @@ async def main():
         role = message.role
         if role in ["user", "model-text-response"]:
             with st.chat_message("human" if role == "user" else "ai"):
-                st.markdown(message.content)        
+                st.markdown(message.content)
 
     # React to user input
-    if prompt := st.chat_input("What would you like to see for today?"):
+    if prompt := st.chat_input("What would you like to find today?"):
         # Display user message in chat message container
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
