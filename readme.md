@@ -43,7 +43,7 @@ The Streamlit app is created to provide a UI with text streaming from the LLM. Y
 This is where you will write your agent with pydantic ai. By default the model will respond to messages with chat gpt-4o.
 
 You can define your system prompt during agent creation
-    ```javascript
+    ```
         ai_agent = Agent(
             model,
             system_prompt="INSERT HERE",
@@ -55,15 +55,16 @@ Define your tools with the @ai_agent.tool decorator. You can use any python libr
 For each tool make sure to use the provided docstring to tell the ai agent what the tool is and what data is required/what data is returned.
 
 For example (the first line is the description of the agent tool)
- """
-    Get the transcript of a YouTube video. Use this to take generate notes in markdown format based on the content of a youtube video.
 
-    Args:
-        ctx: The context.
-        video_url: The URL of the YouTube video.
+    """
+        Get the transcript of a YouTube video. Use this to take generate notes in markdown format based on the content of a youtube video.
 
-    Returns:
-        str: The transcript of the video.
+        Args:
+            ctx: The context.
+            video_url: The URL of the YouTube video.
+
+        Returns:
+            str: The transcript of the video.
     """
 
 ## Next steps
