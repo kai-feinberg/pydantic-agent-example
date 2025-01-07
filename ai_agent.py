@@ -144,17 +144,17 @@ async def get_youtube_transcript(
     return formatted_transcript if formatted_transcript else "No transcript found for the video."
 
 async def main():
-    async with AsyncClient() as client:
-        brave_api_key = os.getenv('BRAVE_API_KEY', None)
-        deps = Deps(client=client, brave_api_key=brave_api_key)
+    # async with AsyncClient() as client:
+    #     brave_api_key = os.getenv('BRAVE_API_KEY', None)
+    #     deps = Deps(client=client, brave_api_key=brave_api_key)
 
-        result = await web_search_agent.run(
-            'Give me some articles talking about the new release of React 19.', deps=deps
-        )
+    #     result = await web_search_agent.run(
+    #         'Give me some articles talking about the new release of React 19.', deps=deps
+    #     )
         
-        debug(result)
-        print('Response:', result.data)
-
+    #     debug(result)
+    #     print('Response:', result.data)
+    print("this doesn't matter")
 
 if __name__ == '__main__':
     asyncio.run(main())

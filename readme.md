@@ -40,7 +40,7 @@ The Streamlit app is created to provide a UI with text streaming from the LLM. Y
 
 
 ### `Web_search_agent`
-This is where you will write your agent with pydantic ai. By default the model will respond to messages with chat gpt-4o.
+This is where you will write your agent with pydantic ai. By default the model will respond to messages with chat gpt-4o. There are two example tools, one to search the web with brave's api and one to fetch the transcript of a youtube video.
 
 You can define your system prompt during agent creation
 
