@@ -16,20 +16,6 @@ llm = os.getenv('LLM_MODEL', 'gpt-4o')
 
 model = OpenAIModel('gpt-4o')
 
-def build_workflow_tree(messages):
-    workflow = []
-    indent = 0
-    
-    for msg in messages:
-        if msg.role == 'model-structured-response':
-            workflow.append(('thinking', indent))
-            for call in msg.calls:
-                indent += 1
-                workflow.append((f"⚡ {call.tool_name}", indent))
-        elif msg.role == 'tool-return':
-            indent = max(0, indent - 1)  # Decrease indent after tool return
-            
-    return workflow
 
 async def prompt_ai(messages):
     async with AsyncClient() as client:
@@ -48,12 +34,6 @@ async def prompt_ai(messages):
             
             await result.get_data()
             
-            # Process workflow
-            workflow = build_workflow_tree(result._all_messages)
-            if workflow:
-                yield "\n\n---\n**Agent Workflow:**\n"
-                for step, indent in workflow:
-                    yield f"\n{'|    ' * indent}{step}"
             
             # Process tool usage
             tool_calls = []
